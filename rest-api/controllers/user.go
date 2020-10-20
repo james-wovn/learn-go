@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-learn/config"
 	"go-learn/models"
 	"net/http"
 )
@@ -14,30 +15,17 @@ type UpdateUserInput struct {
 	Name string `json:"name"`
 }
 
-// GET /users
+// GET /user
 // Find all users
 func FindUsers(c *gin.Context) {
 	var users []models.User
 
-	models.DB.Find(&users)
+	config.DB.Find(&users)
 
 	c.JSON(http.StatusOK, gin.H{"data": users})
 }
 
-// GET /users/:id
-// Find a user
-func FindUser(c *gin.Context) {
-	// Get user if exist
-	var user models.User
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": user})
-}
-
-// POST /users
+// POST /user
 // Create new user
 func CreateUser(c *gin.Context) {
 	// Validate input
@@ -49,17 +37,30 @@ func CreateUser(c *gin.Context) {
 
 	// Create user
 	user := models.User{Name: input.Name}
-	models.DB.Create(&user)
+	config.DB.Create(&user)
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-// PATCH /users/:id
+// GET /user/:id
+// Find a user
+func FindUser(c *gin.Context) {
+	// Get user if exist
+	var user models.User
+	if err := config.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
+// PATCH /user/:id
 // Update a user
 func UpdateUser(c *gin.Context) {
 	// Get user if exist
 	var user models.User
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
+	if err := config.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
 		return
 	}
@@ -72,23 +73,23 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	// Update user
-	models.DB.Model(&user).Updates(input)
+	config.DB.Model(&user).Updates(input)
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-// DELETE /users.:id
+// DELETE /user/:id
 // Delete a user
 func DeleteUser(c *gin.Context) {
 	// Get user if exist
 	var user models.User
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
+	if err := config.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
 		return
 	}
 
 	// Delete user
-	models.DB.Delete(&user)
+	config.DB.Delete(&user)
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

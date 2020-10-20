@@ -1,24 +1,14 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"go-learn/controllers"
-	"go-learn/models"
+	"go-learn/config"
+	"go-learn/router"
 )
 
 func main() {
-	r := gin.Default()
-
 	// Open database connection
-	models.OpenDatabase()
+	config.OpenDatabase()
 
-	// Routes
-	r.GET("/users", controllers.FindUsers)
-	r.POST("/users", controllers.CreateUser)
-	r.GET("/users/:id", controllers.FindUser)
-	r.PATCH("/users/:id", controllers.UpdateUser)
-	r.DELETE("/users/:id", controllers.DeleteUser)
-
-	// Run the server
-	r.Run()
+	// Start server
+	router.StartServer()
 }

@@ -1,7 +1,8 @@
-package models
+package config
 
 import (
 	"fmt"
+	"go-learn/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
@@ -23,7 +24,7 @@ func OpenDatabase() {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&models.User{})
 
 	DB = db
 }
