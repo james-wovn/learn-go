@@ -10,8 +10,7 @@ import (
 var DB *gorm.DB
 
 func OpenDatabase() {
-	var err error
-	DB, err = gorm.Open(postgres.New(postgres.Config{
+	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN: fmt.Sprintf("user=%s password=%s dbname=%s",
 			os.Getenv("DB_USER"),
 			os.Getenv("DB_PASSWORD"),
@@ -24,5 +23,7 @@ func OpenDatabase() {
 		panic("failed to connect database")
 	}
 
-	DB.AutoMigrate(&User{})
+	db.AutoMigrate(&User{})
+
+	DB = db
 }

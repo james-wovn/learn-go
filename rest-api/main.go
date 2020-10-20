@@ -4,21 +4,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-learn/controllers"
 	"go-learn/models"
-	"net/http"
 )
 
 func main() {
 	r := gin.Default()
 
+	// Open database connection
 	models.OpenDatabase()
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"data": "hello world"})
-	})
-
+	// Routes
 	r.GET("/users", controllers.FindUsers)
-	r.POST("/user/create", controllers.CreateUser)
-	r.GET("/user/:id", controllers.FindUser)
+	r.POST("/users", controllers.CreateUser)
+	r.GET("/users/:id", controllers.FindUser)
+	r.PATCH("/users/:id", controllers.UpdateUser)
+	r.DELETE("/users/:id", controllers.DeleteUser)
 
+	// Run the server
 	r.Run()
 }
