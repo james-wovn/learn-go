@@ -24,7 +24,17 @@ func OpenDatabase() {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(
+		&models.Project{},
+		&models.Language{},
+		&models.User{},
+		&models.ProjectAccessPermission{},
+		&models.Folder{},
+		&models.File{},
+		&models.FileVersion{},
+		&models.FileSegment{},
+		&models.TranslationOrder{},
+	)
 
 	DB = db
 }

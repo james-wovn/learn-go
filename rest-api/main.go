@@ -2,7 +2,6 @@ package main
 
 import (
 	"go-learn/config"
-	"go-learn/router"
 )
 
 func main() {
@@ -10,5 +9,5 @@ func main() {
 	config.OpenDatabase()
 
 	// Start server
-	router.StartServer()
+	//router.StartServer()
 }

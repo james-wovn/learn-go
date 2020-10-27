@@ -1,0 +1,286 @@
+@startuml
+
+'TODO add revisions
+'TODO add user_tokens
+
+hide empty fields
+hide empty methods
+
+skinparam Shadowing false
+
+skinparam ArrowBlack #3892E5
+
+skinparam ClassBackgroundColor #FFFFFF
+skinparam ClassBorderColor #DEE5EC
+skinparam ClassArrowColor #3892E5
+skinparam ClassAttributeFontColor #27313B
+skinparam ClassAttributeFontName Monospaced
+skinparam ClassAttributeFontSize 13
+skinparam ClassAttributeFontStyle normal
+skinparam ClassFontColor #27313B
+skinparam ClassFontName Monospaced
+skinparam ClassFontSize 14
+skinparam ClassFontStyle normal
+skinparam CircledCharacterFontColor #27313B
+skinparam CircledCharacterFontName Monospaced
+skinparam CircledCharacterFontSize 20
+skinparam CircledCharacterFontStyle bold
+
+skinparam NoteBackgroundColor #FFF0D8
+skinparam NoteBorderColor #FFB63D
+skinparam NoteFontColor #27213B
+skinparam NoteFontName Monospaced
+skinparam NoteFontSize 13
+skinparam NoteFontStyle normal
+
+class projects << (D, #8CD4B0) >> {
+    {field} +id                   bigint
+    {field} created_at           timestamp without time zone
+    {field} updated_at           timestamp without time zone
+    {field} deleted_at           ?timestamp without time zone
+    {field} memsource_project_id bigint
+    {field} name                 character varying
+}
+
+class languages << (D, #8CD4B0) >> {
+    {field} +code       character(2)
+    {field} created_at timestamp without time zone
+    {field} updated_at timestamp without time zone
+    {field} updated_at timestamp without time zone_code
+    {field} name       character varying
+    {field} unit_type  character(4)
+    {field} unit_price integer
+}
+note left
+    ISO 639-1
+      - en (English)
+      - ja (Japanese)
+end note
+
+class users << (D, #8CD4B0) >> {
+    {field} +id                    bigint
+    {field} created_at            timestamp without time zone
+    {field} updated_at            timestamp without time zone
+    {field} deleted_at            ?timestamp without time zone
+    {field} ~display_language_code character(2)
+    {field} ~file_language_code    character(2)
+    {field} email                 character varying
+    {field} password              character varying
+    {field} properties            jsonb
+}
+note left
+    {
+        "name": {
+            "sourceLanguage": "en",
+            "sourceText": "John Smith",
+            "initial": "j",
+            "translations": [
+                {
+                    "targetLanguage": "en",
+                    "machineTranslatedText": "John Smith"
+                },
+                {
+                    "targetLanguage": "ja",
+                    "machineTranslatedText": "ジョンスミス"
+                }
+            ]
+        }
+    }
+end note
+
+class project_access_permissions << (F, #C0A5E0) >> {
+    {field} +id         bigint
+    {field} created_at timestamp without time zone
+    {field} updated_at timestamp without time zone
+    {field} ~project_id bigint
+    {field} ~user_id    bigint
+}
+
+class folders << (D, #8CD4B0) >> {
+    {field} +id         bigint
+    {field} created_at timestamp without time zone
+    {field} updated_at timestamp without time zone
+    {field} deleted_at ?timestamp without time zone
+    {field} ~project_id bigint
+    {field} ~user_id    bigint
+    {field} ~parent_id  ?bigint
+    {field} properties jsonb
+}
+note left
+    {
+        "name": {
+            "sourceLanguage": "en",
+            "sourceText": "Hello, World",
+            "translations": [
+                {
+                    "targetLanguage": "en",
+                    "machineTranslatedText": "Hello, World"
+                },
+                {
+                    "targetLanguage": "ja",
+                    "machineTranslatedText": "こんにちは世界"
+                }
+            ]
+        }
+    }
+end note
+
+class files << (D, #8CD4B0) >> {
+    {field} +id         bigint
+    {field} created_at timestamp without time zone
+    {field} updated_at timestamp without time zone
+    {field} deleted_at ?timestamp without time zone
+    {field} ~folder_id  bigint
+    {field} ~project_id bigint
+}
+
+class file_versions << (D, #8CD4B0) >> {
+    {field} +id         bigint
+    {field} created_at timestamp without time zone
+    {field} updated_at timestamp without time zone
+    {field} deleted_at ?timestamp without time zone
+    {field} ~file_id    bigint
+    {field} ~user_id    bigint
+    {field} version    integer
+    {field} is_current boolean
+    {field} properties jsonb
+}
+note left
+    {
+        "name": {
+            "sourceLanguage": "en",
+            "sourceText": "Hello, World",
+            "translations": [
+                {
+                    "targetLanguage": "en",
+                    "machineTranslatedText": "Hello, World"
+                },
+                {
+                    "targetLanguage": "ja",
+                    "machineTranslatedText": "こんにちは世界"
+                }
+            ]
+        }
+    }
+end note
+
+class file_segments << (F, #C0A5E0) >> {
+    {field} +id                         bigint
+    {field} created_at                 timestamp without time zone
+    {field} updated_at                 timestamp without time zone
+    {field} ~file_version_id            bigint
+    {field} ~source_language_code       character(2)
+    {field} source_text                text
+    {field} source_language_unit_count integer
+    {field} translation                jsonb
+}
+note left
+    {
+        "translations": [
+            {
+                "targetLanguage": "en",
+                "machineTranslatedText": "Hello, World!",
+                "humanTranslatedText": null
+            },
+            {
+                "targetLanguage": "ja",
+                "machineTranslatedText": "こんにちは世界",
+                "humanTranslatedText": "こんにちは世界"
+            }
+        ]
+    }
+end note
+
+class translation_orders << (D, #8CD4B0) >> {
+    {field} +id               bigint
+    {field} created_at       timestamp without time zone
+    {field} updated_at       timestamp without time zone
+    {field} ~file_version_id  bigint
+    {field} ~user_id          bigint
+    {field} subtotal         integer
+    {field} total            integer
+    {field} translation_jobs jsonb
+
+}
+note left
+    {
+        "translationJobs": [
+            {
+                "memsource_job_id": 123,
+                "sourceLanguage": "en",
+                "targetLanguage": "jp",
+                "unitType": "word",
+                "unitPrice": 16,
+                "unitCount": 2,
+                "total": 32
+            }
+        ]
+    }
+end note
+
+languages "0..*" -- "1..1" users
+languages "0..*" -- "1..1" file_segments
+
+users "0..*" -- "1..1" folders
+users "0..*" -- "1..1" file_versions
+users "0..*" -- "1..1" translation_orders
+
+projects "1..*" -- "1..1" folders
+projects "0..*" -- "1..1" files
+
+projects "0..*" -- "*..*" project_access_permissions
+project_access_permissions "*..*" -- "0..*" users
+
+folders "0..1" -- "1..*" folders
+folders "0..*" -- "1..1" files
+
+files "1..*" -- "1..1" file_versions
+
+file_versions "0..*" -- "1..1" file_segments
+file_versions "0..1" -- "1..1" translation_orders
+
+'notes about api:
+'https://restfulapi.net/resource-naming/
+'
+'/users
+'/users/{userId}
+'/users/admin
+'/user/{userId}/projects // ? Front end requirement unknown
+'
+'/projects
+'/projects/{projectId}
+'/projects/{projectId}/users // ? Front end requirement unknown
+'
+'/projects/{projectId}/users
+'/projects/{projectId}/users/{userId}
+'/projects/{projectId}/sign-in
+'/projects/{projectId}/sign-out
+'
+'/projects/{projectId}/folders
+'/projects/{projectId}/folders/{folderId}
+'/projects/{projectId}/folders/share
+'/projects/{projectId}/folders/rename
+'/projects/{projectId}/folders/move
+'/projects/{projectId}/folders/trash
+'/projects/{projectId}/folders/restore
+'
+'/projects/{projectId}/files
+'/projects/{projectId}/files/{fileId}
+'/projects/{projectId}/files/share
+'/projects/{projectId}/files/rename
+'/projects/{projectId}/files/move
+'/projects/{projectId}/files/trash
+'/projects/{projectId}/files/restore
+'/projects/{projectId}/files/prepare-order
+'/projects/{projectId}/files/place-order
+'
+'/projects/{projectId}/files/{fileId}/file-versions/
+'/projects/{projectId}/files/{fileId}/file-versions/{fileVersionId}
+'/projects/{projectId}/files/{fileId}/file-versions/make-current
+'/projects/{projectId}/files/{fileId}/file-versions/delete
+'
+'/projects/{projectId}/files/{fileId}/translation-orders
+'
+'/translation-orders
+'/translation-orders/{translationOrderId}
+@enduml

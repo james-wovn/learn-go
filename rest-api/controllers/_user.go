@@ -8,7 +8,10 @@ import (
 )
 
 type CreateUserInput struct {
-	Name string `json:"name" binding:"required"`
+	//Name string `json:"name" binding:"required"`
+	Email string `json:"name" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Properties
 }
 
 type UpdateUserInput struct {
@@ -36,7 +39,10 @@ func CreateUser(c *gin.Context) {
 	}
 
 	// Create user
-	user := models.User{Name: input.Name}
+	user := models.User{
+		Name: input.Name
+		DisplayLanguage: input.Di
+	}
 	config.DB.Create(&user)
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
