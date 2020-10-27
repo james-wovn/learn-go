@@ -46,7 +46,7 @@ class languages << (D, #8CD4B0) >> {
     {field} +code       character(2)
     {field} created_at timestamp without time zone
     {field} updated_at timestamp without time zone
-    {field} updated_at timestamp without time zone_code
+    {field} deleted_at ?timestamp without time zone
     {field} name       character varying
     {field} unit_type  character(4)
     {field} unit_price integer
@@ -92,6 +92,7 @@ class project_access_permissions << (F, #C0A5E0) >> {
     {field} +id         bigint
     {field} created_at timestamp without time zone
     {field} updated_at timestamp without time zone
+    {field} deleted_at ?timestamp without time zone
     {field} ~project_id bigint
     {field} ~user_id    bigint
 }
@@ -168,6 +169,7 @@ class file_segments << (F, #C0A5E0) >> {
     {field} +id                         bigint
     {field} created_at                 timestamp without time zone
     {field} updated_at                 timestamp without time zone
+    {field} deleted_at                 ?timestamp without time zone
     {field} ~file_version_id            bigint
     {field} ~source_language_code       character(2)
     {field} source_text                text
@@ -195,6 +197,7 @@ class translation_orders << (D, #8CD4B0) >> {
     {field} +id               bigint
     {field} created_at       timestamp without time zone
     {field} updated_at       timestamp without time zone
+    {field} deleted_at       ?timestamp without time zone
     {field} ~file_version_id  bigint
     {field} ~user_id          bigint
     {field} subtotal         integer
