@@ -142,7 +142,7 @@ class file_versions << (D, #8CD4B0) >> {
     {field} deleted_at ?timestamp without time zone
     {field} ~file_id    bigint
     {field} ~user_id    bigint
-    {field} version    integer
+    {field} version    serial
     {field} is_current boolean
     {field} properties jsonb
 }
