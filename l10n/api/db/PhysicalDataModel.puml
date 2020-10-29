@@ -33,23 +33,34 @@ skinparam NoteFontName Monospaced
 skinparam NoteFontSize 13
 skinparam NoteFontStyle normal
 
+class schema_migrations << (D, #8CD4B0) >> {
+    {field} +version bigint
+    {field} dirty   boolean
+}
+
 class projects << (D, #8CD4B0) >> {
-    {field} +id                   bigint
-    {field} created_at           timestamp without time zone
-    {field} updated_at           timestamp without time zone
-    {field} deleted_at           ?timestamp without time zone
-    {field} memsource_project_id bigint
-    {field} name                 character varying
+    {field} +id                    bigserial
+    {field} created_at            timestamp without time zone
+    {field} updated_at            timestamp without time zone
+    {field} deleted_at            ?timestamp without time zone
+    {field} ~created_by            bigint
+    {field} ~updated_by            bigint
+    {field} ~deleted_by            ?bigint
+    {field} memsource_project_uid  character(22)
+    {field} name                  character varying
 }
 
 class languages << (D, #8CD4B0) >> {
-    {field} +code       character(2)
-    {field} created_at timestamp without time zone
-    {field} updated_at timestamp without time zone
-    {field} deleted_at ?timestamp without time zone
-    {field} name       character varying
-    {field} unit_type  character(4)
-    {field} unit_price integer
+    {field} +code        character(2)
+    {field} created_at  timestamp without time zone
+    {field} updated_at  timestamp without time zone
+    {field} deleted_at  ?timestamp without time zone
+    {field} ~created_by  bigint
+    {field} ~updated_by  bigint
+    {field} ~deleted_by  ?bigint
+    {field} name        character varying
+    {field} unit_type   character(4)
+    {field} unit_price  integer
 }
 note left
     ISO 639-1
@@ -58,29 +69,32 @@ note left
 end note
 
 class users << (D, #8CD4B0) >> {
-    {field} +id                    bigint
+    {field} +id                    bigserial
     {field} created_at            timestamp without time zone
     {field} updated_at            timestamp without time zone
     {field} deleted_at            ?timestamp without time zone
+    {field} ~created_by            bigint
+    {field} ~updated_by            bigint
+    {field} ~deleted_by            ?bigint
     {field} ~display_language_code character(2)
     {field} ~file_language_code    character(2)
     {field} email                 character varying
     {field} password              character varying
-    {field} properties            jsonb
+    {field} attributes            ?jsonb
 }
 note left
     {
         "name": {
-            "sourceLanguage": "en",
+            "sourceLanguageCode": "en",
             "sourceText": "John Smith",
             "initial": "j",
             "translations": [
                 {
-                    "targetLanguage": "en",
+                    "targetLanguageCode": "en",
                     "machineTranslatedText": "John Smith"
                 },
                 {
-                    "targetLanguage": "ja",
+                    "targetLanguageCode": "ja",
                     "machineTranslatedText": "ジョンスミス"
                 }
             ]
@@ -88,37 +102,42 @@ note left
     }
 end note
 
-class project_access_permissions << (F, #C0A5E0) >> {
-    {field} +id         bigint
+class project_users << (F, #C0A5E0) >> {
+    {field} +id         bigserial
     {field} created_at timestamp without time zone
     {field} updated_at timestamp without time zone
     {field} deleted_at ?timestamp without time zone
+    {field} ~created_by bigint
+    {field} ~updated_by bigint
+    {field} ~deleted_by ?bigint
     {field} ~project_id bigint
     {field} ~user_id    bigint
 }
 
 class folders << (D, #8CD4B0) >> {
-    {field} +id         bigint
+    {field} +id         bigserial
     {field} created_at timestamp without time zone
     {field} updated_at timestamp without time zone
     {field} deleted_at ?timestamp without time zone
+    {field} ~created_by bigint
+    {field} ~updated_by bigint
+    {field} ~deleted_by ?bigint
     {field} ~project_id bigint
-    {field} ~user_id    bigint
     {field} ~parent_id  ?bigint
     {field} properties jsonb
 }
 note left
     {
         "name": {
-            "sourceLanguage": "en",
+            "sourceLanguageCode": "en",
             "sourceText": "Hello, World",
             "translations": [
                 {
-                    "targetLanguage": "en",
+                    "targetLanguageCode": "en",
                     "machineTranslatedText": "Hello, World"
                 },
                 {
-                    "targetLanguage": "ja",
+                    "targetLanguageCode": "ja",
                     "machineTranslatedText": "こんにちは世界"
                 }
             ]
@@ -127,37 +146,44 @@ note left
 end note
 
 class files << (D, #8CD4B0) >> {
-    {field} +id         bigint
+    {field} +id         bigserial
     {field} created_at timestamp without time zone
     {field} updated_at timestamp without time zone
     {field} deleted_at ?timestamp without time zone
+    {field} ~created_by bigint
+    {field} ~updated_by bigint
+    {field} ~deleted_by ?bigint
     {field} ~folder_id  bigint
     {field} ~project_id bigint
 }
 
 class file_versions << (D, #8CD4B0) >> {
-    {field} +id         bigint
-    {field} created_at timestamp without time zone
-    {field} updated_at timestamp without time zone
-    {field} deleted_at ?timestamp without time zone
-    {field} ~file_id    bigint
-    {field} ~user_id    bigint
-    {field} version    serial
-    {field} is_current boolean
-    {field} properties jsonb
+    {field} +id                    bigserial
+    {field} created_at            timestamp without time zone
+    {field} updated_at            timestamp without time zone
+    {field} deleted_at            ?timestamp without time zone
+    {field} ~created_by            bigint
+    {field} ~updated_by            bigint
+    {field} ~deleted_by            ?bigint
+    {field} ~file_id               bigint
+    {field} version               serial
+    {field} is_current_version     boolean
+    {field} is_machine_translated boolean
+    {field} is_human_translated   boolean
+    {field} attributes            jsonb
 }
 note left
     {
         "name": {
-            "sourceLanguage": "en",
+            "sourceLanguageCode": "en",
             "sourceText": "Hello, World",
             "translations": [
                 {
-                    "targetLanguage": "en",
+                    "targetLanguageCode": "en",
                     "machineTranslatedText": "Hello, World"
                 },
                 {
-                    "targetLanguage": "ja",
+                    "targetLanguageCode": "ja",
                     "machineTranslatedText": "こんにちは世界"
                 }
             ]
@@ -166,26 +192,29 @@ note left
 end note
 
 class file_segments << (F, #C0A5E0) >> {
-    {field} +id                         bigint
+    {field} +id                         bigserial
     {field} created_at                 timestamp without time zone
     {field} updated_at                 timestamp without time zone
     {field} deleted_at                 ?timestamp without time zone
+    {field} ~created_by                 bigint
+    {field} ~updated_by                 bigint
+    {field} ~deleted_by                 ?bigint
     {field} ~file_version_id            bigint
     {field} ~source_language_code       character(2)
     {field} source_text                text
     {field} source_language_unit_count integer
-    {field} translation                jsonb
+    {field} translations               jsonb
 }
 note left
     {
         "translations": [
             {
-                "targetLanguage": "en",
+                "targetLanguageCode": "en",
                 "machineTranslatedText": "Hello, World!",
                 "humanTranslatedText": null
             },
             {
-                "targetLanguage": "ja",
+                "targetLanguageCode": "ja",
                 "machineTranslatedText": "こんにちは世界",
                 "humanTranslatedText": "こんにちは世界"
             }
@@ -194,12 +223,14 @@ note left
 end note
 
 class translation_orders << (D, #8CD4B0) >> {
-    {field} +id               bigint
+    {field} +id               bigserial
     {field} created_at       timestamp without time zone
     {field} updated_at       timestamp without time zone
     {field} deleted_at       ?timestamp without time zone
+    {field} ~created_by       bigint
+    {field} ~updated_by       bigint
+    {field} ~deleted_by       ?bigint
     {field} ~file_version_id  bigint
-    {field} ~user_id          bigint
     {field} subtotal         integer
     {field} total            integer
     {field} translation_jobs jsonb
@@ -209,9 +240,9 @@ note left
     {
         "translationJobs": [
             {
-                "memsource_job_id": 123,
-                "sourceLanguage": "en",
-                "targetLanguage": "jp",
+                "memsource_job_id": "dOYgeXzAdAbj4xFjuEVZP2",
+                "sourceLanguageCode": "en",
+                "targetLanguageCode": "jp",
                 "unitType": "word",
                 "unitPrice": 16,
                 "unitCount": 2,
@@ -231,8 +262,8 @@ users "0..*" -- "1..1" translation_orders
 projects "1..*" -- "1..1" folders
 projects "0..*" -- "1..1" files
 
-projects "0..*" -- "*..*" project_access_permissions
-project_access_permissions "*..*" -- "0..*" users
+projects "0..*" -- "*..*" project_users
+project_users "*..*" -- "0..*" users
 
 folders "0..1" -- "1..*" folders
 folders "0..*" -- "1..1" files

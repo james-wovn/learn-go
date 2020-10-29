@@ -16,6 +16,6 @@ type FileSegment struct {
 	SourceLanguage          Language       `gorm:foreignKey;reference:SourceLanguageCode`
 	SourceLanguageCode      string         `gorm:"type:character(2);not null;index" json:"sourceLanguageCode"`
 	SourceText              string         `gorm:"not null" json:"sourceText"`
-	SourceLanguageUnitCount uint           `gorm:"type:integer;not null" json:"sourceLanguageUnitCount"`
+	SourceLanguageUnitCount uint           `gorm:"type:BIGINT;not null" json:"sourceLanguageUnitCount"`
 	Translation             datatypes.JSON `gorm:"type:jsonb;not null;index:,type:gin" json:"translation"`
 }

@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-learn/config"
-	"go-learn/models"
+	"learn-go/web-service/api/config"
+	"learn-go/web-service/api/models"
 	"net/http"
 )
 

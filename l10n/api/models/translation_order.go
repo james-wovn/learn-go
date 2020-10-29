@@ -15,7 +15,7 @@ type TranslationOrder struct {
 	FileVersionID   uint `gorm:"not null;index" json:"fileVersionId"`
 	User            User
 	UserID          uint           `gorm:"not null;index" json:"userId"`
-	Subtotal        uint           `gorm:"type:integer;not null" json:"subtotal"`
-	Total           uint           `gorm:"type:integer;not null" json:"total"`
+	Subtotal        uint           `gorm:"type:BIGINT;not null" json:"subtotal"`
+	Total           uint           `gorm:"type:BIGINT;not null" json:"total"`
 	TranslationJobs datatypes.JSON `gorm:"type:jsonb;not null;index:,type:gin" json:"translationJobs"`
 }

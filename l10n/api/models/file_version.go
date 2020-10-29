@@ -15,7 +15,7 @@ type FileVersion struct {
 	FileID     uint `gorm:"not null;index" json:"fileId"`
 	User       User
 	UserID     uint           `gorm:"not null;index" json:"userId"`
-	Version    uint           `gorm:"type:serial" json:"version"`
+	Version    uint           `gorm:"type:BIGSERIAL" json:"version"`
 	IsCurrent  bool           `gorm:"type:boolean;not null;default:true" json:"isCurrent"`
 	Properties datatypes.JSON `gorm:"type:jsonb;not null;index:,type:gin" json:"properties"`
 }

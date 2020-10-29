@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-learn/controllers"
+	"learn-go/web-service/api/controllers"
 )
 
 var R *gin.Engine
